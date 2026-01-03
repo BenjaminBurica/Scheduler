@@ -1,4 +1,4 @@
-using Scheduler.Entities;
+using Entities;
 
 namespace BusinessLogic.Models;
 public class GetUserResponse

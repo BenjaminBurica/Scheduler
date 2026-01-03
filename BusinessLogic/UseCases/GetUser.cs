@@ -1,12 +1,16 @@
 namespace BusinessLogic.UseCases;
 
 using BusinessLogic.Models;
-using Scheduler.Entities;
+using Entities;
+using Data.Repositories;
+using System.Reflection.Metadata;
 
 public class GetUser
 {
     public GetUserResponse Execute(GetUserRequest request)
     {
-        return new GetUserResponse { User = new User { PhoneNumber = request.PhoneNumber } };
+        var repo = new UserRepository();
+        var user = repo.GetUserbyPhoneNumber(request.PhoneNumber);
+        return new GetUserResponse { User = user };
     }
 }

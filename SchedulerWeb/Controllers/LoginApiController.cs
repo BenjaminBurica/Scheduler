@@ -4,13 +4,13 @@ using BusinessLogic.Models;
 using BusinessLogic.UseCases;
 using SchedulerWeb.Models;
 namespace SchedulerWeb.Controllers
+
 {
-    [Route("api/[controller]")]
+    [Route("api/login")]
     [ApiController]
     public class LoginApiController : ControllerBase
     {
-        [HttpPost]
-        [Route("login")]
+        [HttpPost("login")]
         public LoginApiResponse Login(LoginApiRequest request)
         {
             if (request.PhoneNumber != null) {

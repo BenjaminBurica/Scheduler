@@ -1,4 +1,4 @@
-namespace Scheduler.Entities;
+namespace Entities;
 
 public class User
 {

@@ -1,4 +1,4 @@
-namespace Scheduler.Entities;
+namespace Entities;
 public enum Role
 {
     Uknown = 0,

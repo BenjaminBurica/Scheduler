@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Data/Data.csproj" />
+    <Folder Include="Repositories/" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../Entities/Entities.csproj" />
   </ItemGroup>
 
