@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
         this.configuration = configuration;
     }
 
-    public User? GetUserbyPhoneNumber(string phoneNumber)
+    public User? GetUserbyPhoneNumber(string? phoneNumber)
     {
         throw new NotImplementedException();
     }

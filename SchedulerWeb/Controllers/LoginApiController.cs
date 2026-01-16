@@ -10,12 +10,18 @@ namespace SchedulerWeb.Controllers
     [ApiController]
     public class LoginApiController : ControllerBase
     {
+        private readonly IGetUser getUser;
+
+        public LoginApiController(IGetUser getUser)
+        {
+            this.getUser = getUser;
+        }
+
         [HttpPost("login")]
         public LoginApiResponse Login(LoginApiRequest request)
         {
             if (request.PhoneNumber != null) {
                 var userRequest = new GetUserRequest {PhoneNumber = request.PhoneNumber};
-                var getUser = new GetUser();
                 var response = getUser.Execute(userRequest);
                 if (response.User != null)
                 {
