@@ -18,11 +18,11 @@ namespace SchedulerWeb.Controllers
         }
 
         [HttpPost("login")]
-        public LoginApiResponse Login(LoginApiRequest request)
+        public async Task<LoginApiResponse> Login(LoginApiRequest request)
         {
             if (request.PhoneNumber != null) {
                 var userRequest = new GetUserRequest {PhoneNumber = request.PhoneNumber};
-                var response = getUser.Execute(userRequest);
+                var response = await getUser.ExecuteAsync(userRequest);
                 if (response.User != null)
                 {
                     return new LoginApiResponse { Success = true };

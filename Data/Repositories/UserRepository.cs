@@ -17,17 +17,12 @@ public class UserRepository : IUserRepository
         this.configuration = configuration;
     }
 
-    public User? GetUserbyPhoneNumber(string? phoneNumber)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<User?> GetUserbyPhoneNumberAsync(string? phoneNumber)
     {
         var connectionString = configuration.GetConnectionString("Schedule") ?? "";
         await using var dataSource = NpgsqlDataSource.Create(connectionString);
         var sql = @"
-            select user_id, role_id, rist_name, last_name, phone_number, created_date, updated_date
+            select user_id, role_id, first_name, last_name, phone_number, created_date, updated_date
             from users
             where phone_number = ($1)
         ";

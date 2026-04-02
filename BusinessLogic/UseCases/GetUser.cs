@@ -13,9 +13,9 @@ public class GetUser : IGetUser
     {
         this.userRepository = userRepository;
     }
-    public GetUserResponse Execute(GetUserRequest request)
+    public async Task<GetUserResponse> ExecuteAsync(GetUserRequest request)
     {
-        var user = userRepository.GetUserbyPhoneNumber(request.PhoneNumber);
+        var user = await userRepository.GetUserbyPhoneNumberAsync(request.PhoneNumber);
         return new GetUserResponse { User = user };
     }
 }

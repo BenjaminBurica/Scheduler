@@ -2,11 +2,16 @@ const loginButton = document.getElementById("loginButton");
 const phoneNumberInput = document.getElementById("Phone Number");
 const resultDiv = document.getElementById("result");
 
-function handleLoginResponse(response) {
+async function handleLoginResponse(response) {
     if (response.ok) {
-        resultDiv.innerText = "Successful login";
-    } else {
-        resultDiv.innerText = "Login failed";
+        const data = await response.json();
+        if (data.success){
+            resultDiv.innerText = "Succesful login";
+        } else{
+            resultDiv.innerText = "Login failed";
+        } 
+    } else{
+        resultDiv.innerText = "Error";
     }
 }
 

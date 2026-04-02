@@ -6,5 +6,5 @@ namespace Data.Repositories;
 
 public interface IUserRepository
 {
-    User? GetUserbyPhoneNumber (string? phoneNumber);
+    Task<User?> GetUserbyPhoneNumberAsync (string? phoneNumber);
 }
