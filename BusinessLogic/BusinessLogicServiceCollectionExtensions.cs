@@ -2,7 +2,6 @@ using System;
 using BusinessLogic.UseCases;
 using Data;
 using Microsoft.Extensions.DependencyInjection;
-
 namespace BusinessLogic;
 
 public static class BusinessLogicServiceCollectionExtensions

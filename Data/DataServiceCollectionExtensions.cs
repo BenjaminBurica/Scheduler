@@ -1,6 +1,6 @@
 using Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-
+using Npgsql.Replication;
 namespace Data;
 
 public static class DataServiceCollectionExtensions
@@ -11,5 +11,3 @@ public static class DataServiceCollectionExtensions
         return services;
     }
 }
-
-

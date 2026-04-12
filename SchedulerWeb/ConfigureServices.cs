@@ -1,8 +1,9 @@
+using System;
 using BusinessLogic;
-using BusinessLogic.UseCases;
-namespace Scheduler;
 
-public static class SchedulerServiceCollectionExtensions
+namespace SchedulerWeb;
+
+public static class ConfigureServices
 {
     public static IServiceCollection AddSchedulerServices(this IServiceCollection services)
     {
