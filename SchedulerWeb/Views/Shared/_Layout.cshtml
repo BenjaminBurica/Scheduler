@@ -3,10 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/Styles/main.css"/>
     <title>@ViewData["Title"] - SchedulerWeb</title>
     <script type="importmap"></script>
 </head>
 <body>
+    <h1>Scheduler</h1>
+    <nav class="main-nav">
+        <ul>
+            <a href="@Url.ActionLink("Index", "Home")">Home</a>
+            <a href="@Url.ActionLink("Index", "Login")">Login</a>
+        </ul>
+    </nav>
     @RenderBody()
 </body>
 </html>
