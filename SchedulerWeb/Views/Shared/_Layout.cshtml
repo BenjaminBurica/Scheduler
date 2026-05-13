@@ -12,7 +12,8 @@
     <nav class="main-nav">
         <ul>
             <a href="@Url.ActionLink("Index", "Home")">Home</a>
-            <a href="@Url.ActionLink("Index", "Login")">Login</a>
+            <a href="@Url.ActionLink(action: "Index", "Login")">Login</a>
+            <a href="@Url.ActionLink(action: "Index", "WeeklySchedule")">Weekly Schedule</a>
         </ul>
     </nav>
     @RenderBody()
