@@ -1,8 +1,254 @@
 @{
-    ViewData["Title"] = "Weekly Schedule Page";
+    ViewData["Title"] = "Weekly Schedule";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Weekly Schedule</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-4">
+    <h1 class="display-4">Business Hours</h1>
+    <p>Set your business hours for each day.</p>
 </div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Open</th>
+                <th>Close</th>
+                <th>Closed</th>
+            </tr>
+        </thead>
+
+        <tbody id="scheduleTable">
+        </tbody>
+    </table>
+
+    <div class="text-center">
+        <button class="btn btn-primary" onclick="saveSchedule()">
+            Save Schedule
+        </button>
+    </div>
+</div>
+
+<script>
+
+const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+];
+
+
+const defaultSchedule = [
+    { start: null,    end: null,    closed: true  },
+    { start: "09:00", end: "17:00", closed: false },
+    { start: "09:00", end: "17:00", closed: false },
+    { start: "09:00", end: "17:00", closed: false },
+    { start: "09:00", end: "17:00", closed: false },
+    { start: "09:00", end: "17:00", closed: false },
+    { start: null,    end: null,    closed: true  }
+];
+
+
+function createTimeOptions(selectedTime)
+{
+    let options = "";
+
+    for (let hour = 0; hour < 24; hour++)
+    {
+        for (let minute = 0; minute < 60; minute += 15)
+        {
+            let hourString = hour.toString().padStart(2, "0");
+            let minuteString = minute.toString().padStart(2, "0");
+
+            let value = `${hourString}:${minuteString}`;
+
+            let displayHour = hour % 12;
+
+            if (displayHour === 0)
+            {
+                displayHour = 12;
+            }
+
+            let amPm = hour < 12 ? "AM" : "PM";
+
+            let display = `${displayHour}:${minuteString} ${amPm}`;
+
+            let selected = value === selectedTime ? "selected" : "";
+
+            options += `<option value="${value}" ${selected}>${display}</option>`;
+        }
+    }
+
+    return options;
+}
+
+
+function createSchedule()
+{
+    const table = document.getElementById("scheduleTable");
+
+    for (let i = 0; i < days.length; i++)
+    {
+        const day = defaultSchedule[i];
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${days[i]}</td>
+
+            <td>
+                <select id="open-${i}">
+                    ${createTimeOptions(day.start)}
+                </select>
+            </td>
+
+            <td>
+                <select id="close-${i}">
+                    ${createTimeOptions(day.end)}
+                </select>
+            </td>
+
+            <td>
+                <input
+                    type="checkbox"
+                    id="closed-${i}"
+                    ${day.closed ? "checked" : ""}
+                    onchange="toggleClosed(${i})">
+            </td>
+        `;
+
+        table.appendChild(row);
+
+        toggleClosed(i);
+    }
+}
+
+
+function toggleClosed(day)
+{
+    const closed = document.getElementById(`closed-${day}`).checked;
+
+    document.getElementById(`open-${day}`).disabled = closed;
+    document.getElementById(`close-${day}`).disabled = closed;
+}
+
+
+async function saveSchedule()
+{
+    const schedule = [];
+
+    for (let i = 0; i < 7; i++)
+    {
+        const closed = document.getElementById(`closed-${i}`).checked;
+
+        schedule.push({
+            start: closed
+                ? null
+                : document.getElementById(`open-${i}`).value,
+
+            end: closed
+                ? null
+                : document.getElementById(`close-${i}`).value,
+
+            closed: closed
+        });
+    }
+
+    const serviceProviderId = 1;
+
+    console.log(schedule);
+
+    const response = await fetch(`/api/schedule/${serviceProviderId}`, {
+        method: "POST",
+        headers:
+        {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(schedule)
+    });
+
+    console.log("Status:", response.status);
+
+    const responseText = await response.text();
+
+    console.log("Response:", responseText);
+
+    if (response.ok)
+    {
+        alert("Schedule saved!");
+    }
+    else
+    {
+        alert(`Error ${response.status}: ${responseText}`);
+    }
+}
+
+async function loadSchedule()
+{
+    const serviceProviderId = 1;
+
+    const response = await fetch(`/api/schedule/${serviceProviderId}`);
+
+    if (!response.ok)
+    {
+        console.log("Could not load schedule.");
+        createSchedule();
+        return;
+    }
+
+    const schedule = await response.json();
+
+    console.log("Loaded schedule:", schedule);
+
+    if (!schedule || schedule.length !== 7)
+    {
+        createSchedule();
+        return;
+    }
+
+    const table = document.getElementById("scheduleTable");
+
+    table.innerHTML = "";
+
+    for (let i = 0; i < 7; i++)
+    {
+        const day = schedule[i];
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${days[i]}</td>
+
+            <td>
+                <select id="open-${i}">
+                    ${createTimeOptions(day?.start)}
+                </select>
+            </td>
+
+            <td>
+                <select id="close-${i}">
+                    ${createTimeOptions(day?.end)}
+                </select>
+            </td>
+
+            <td>
+                <input
+                    type="checkbox"
+                    id="closed-${i}"
+                    ${day?.closed ? "checked" : ""}
+                    onchange="toggleClosed(${i})">
+            </td>
+        `;
+
+        table.appendChild(row);
+
+        toggleClosed(i);
+    }
+}
+
+loadSchedule();
+</script>
