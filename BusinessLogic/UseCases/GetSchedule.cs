@@ -2,7 +2,7 @@ namespace BusinessLogic.UseCases;
 using BusinessLogic.Models;
 using Data.Repositories;
 using Entities;
-
+// get schedule
 public class GetSchedule : IGetSchedule
 {
     private readonly IScheduleRepository repository;
