@@ -1,0 +1,367 @@
+@{
+    ViewData["Title"] = "Customer Profiles";
+}
+
+<h1>Customer Profiles</h1>
+
+<div>
+    <h2>Add Customer Profile</h2>
+
+    <div>
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" />
+    </div>
+
+    <br />
+
+    <div>
+        <label for="serviceType">Service Type</label>
+        <input type="text" id="serviceType" placeholder="Haircut, Hair Dye, etc." />
+    </div>
+
+    <br />
+
+    <h3>Service Steps</h3>
+
+    <div id="steps"></div>
+
+    <button type="button" onclick="addStep()">
+        Add Step
+    </button>
+
+    <p>
+        Total Time:
+        <strong><span id="totalTime">0</span> minutes</strong>
+    </p>
+
+    <button type="button" onclick="saveCustomerProfile()">
+        Save Customer Profile
+    </button>
+</div>
+
+<hr />
+
+<div>
+    <h2>Saved Customer Profiles</h2>
+
+    <div id="customerProfiles">
+        <p>No customer profiles loaded.</p>
+    </div>
+</div>
+
+
+<script>
+
+    // Temporary service provider ID.
+    const serviceProviderId = 1;
+
+
+    let steps = [];
+
+
+    function addStep() {
+
+        steps.push({
+            stepOrder: steps.length + 1,
+            stepType: "Work",
+            durationMinutes: 30
+        });
+
+        renderSteps();
+    }
+
+
+    function removeStep(index) {
+
+        steps.splice(index, 1);
+
+        steps.forEach((step, i) => {
+            step.stepOrder = i + 1;
+        });
+
+        renderSteps();
+    }
+
+
+    function updateStepType(index, value) {
+
+        steps[index].stepType = value;
+    }
+
+
+    function updateStepDuration(index, value) {
+
+        steps[index].durationMinutes =
+            parseInt(value) || 0;
+
+        calculateTotal();
+    }
+
+
+    function renderSteps() {
+
+        const container =
+            document.getElementById("steps");
+
+        container.innerHTML = "";
+
+
+        steps.forEach((step, index) => {
+
+            const div =
+                document.createElement("div");
+
+            div.innerHTML = `
+                <div style="margin-bottom: 10px;">
+
+                    <strong>Step ${step.stepOrder}</strong>
+
+                    <select
+                        onchange="updateStepType(${index}, this.value)"
+                    >
+                        <option value="Work"
+                            ${step.stepType === "Work" ? "selected" : ""}>
+                            Work
+                        </option>
+
+                        <option value="Idle"
+                            ${step.stepType === "Idle" ? "selected" : ""}>
+                            Idle
+                        </option>
+                    </select>
+
+                    <input
+                        type="number"
+                        min="1"
+                        value="${step.durationMinutes}"
+                        onchange="updateStepDuration(${index}, this.value)"
+                    />
+
+                    minutes
+
+                    <button
+                        type="button"
+                        onclick="removeStep(${index})"
+                    >
+                        Remove
+                    </button>
+
+                </div>
+            `;
+
+            container.appendChild(div);
+        });
+
+        calculateTotal();
+    }
+
+
+    function calculateTotal() {
+
+        let total = 0;
+
+        steps.forEach(step => {
+            total += step.durationMinutes;
+        });
+
+        document.getElementById("totalTime").textContent =
+            total;
+    }
+
+
+    async function saveCustomerProfile() {
+
+        const firstName =
+            document.getElementById("firstName").value;
+
+        const serviceType =
+            document.getElementById("serviceType").value;
+
+
+        if (firstName.trim() === "") {
+            alert("Please enter a first name.");
+            return;
+        }
+
+
+        if (serviceType.trim() === "") {
+            alert("Please enter a service type.");
+            return;
+        }
+
+
+        if (steps.length === 0) {
+            alert("Please add at least one service step.");
+            return;
+        }
+
+
+        const customerProfile = {
+
+            serviceProviderId: serviceProviderId,
+
+            firstName: firstName,
+
+            serviceType: serviceType,
+
+            steps: steps
+        };
+
+
+        try {
+
+            const response = await fetch(
+                "/api/customer-profiles",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(customerProfile)
+                }
+            );
+
+
+            if (!response.ok) {
+
+                alert(
+                    "There was an error saving the customer profile."
+                );
+
+                return;
+            }
+
+
+            alert("Customer profile saved!");
+
+
+            document.getElementById("firstName").value = "";
+            document.getElementById("serviceType").value = "";
+
+            steps = [];
+
+            renderSteps();
+
+
+            loadCustomerProfiles();
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            alert(
+                "An error occurred while saving the customer profile."
+            );
+        }
+    }
+
+
+    async function loadCustomerProfiles() {
+
+        try {
+
+            const response = await fetch(
+                `/api/customer-profiles/${serviceProviderId}`
+            );
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "Failed to load customer profiles.",
+                    response.status,
+                    response.statusText
+                );
+
+                return;
+            }
+
+
+            const profiles =
+                await response.json();
+
+
+            const container =
+                document.getElementById("customerProfiles");
+
+
+            container.innerHTML = "";
+
+
+            if (profiles.length === 0) {
+
+                container.innerHTML =
+                    "<p>No customer profiles found.</p>";
+
+                return;
+            }
+
+
+            profiles.forEach(profile => {
+
+                const div =
+                    document.createElement("div");
+
+
+                let totalTime = 0;
+
+                profile.steps.forEach(step => {
+                    totalTime += step.durationMinutes;
+                });
+
+
+                div.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+
+                        <h3>
+                            ${profile.firstName}
+                        </h3>
+
+                        <p>
+                            Service:
+                            ${profile.serviceType}
+                        </p>
+
+                        <p>
+                            Total Time:
+                            ${totalTime} minutes
+                        </p>
+
+                        <strong>Steps:</strong>
+
+                        <ul>
+                            ${profile.steps.map(step => `
+                                <li>
+                                    Step ${step.stepOrder}:
+                                    ${step.stepType}
+                                    -
+                                    ${step.durationMinutes} minutes
+                                </li>
+                            `).join("")}
+                        </ul>
+
+                    </div>
+                `;
+
+
+                container.appendChild(div);
+            });
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+        }
+    }
+
+
+    addStep();
+
+
+    loadCustomerProfiles();
+
+</script>

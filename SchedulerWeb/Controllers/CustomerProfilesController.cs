@@ -1,12 +1,12 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SchedulerWeb.Models;
+using BusinessLogic.UseCases;
+using Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SchedulerWeb.Controllers;
 
 [Authorize(Roles = "Admin,ServiceProvider")]
-public class WeeklySchedule : Controller
+public class CustomerProfilesController : Controller
 {
     public IActionResult Index()
     {

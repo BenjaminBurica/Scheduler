@@ -21,6 +21,9 @@ public static class ConfigureServices
         services.AddScoped<IServiceProviderRepository, ServiceProviderRepository>();
         services.AddScoped<IGetServiceProvider, GetServiceProvider>();
 
+        services.AddScoped<ICustomerProfileRepository, CustomerProfileRepository>();
+        services.AddScoped<ISaveCustomerProfile, SaveCustomerProfile>();
+        services.AddScoped<IGetCustomerProfiles, GetCustomerProfile>();
         return services;
     }
 }

@@ -89,6 +89,7 @@ function createTimeOptions(selectedTime)
 
 function createSchedule()
 {
+    console.log("Creating schedule...");
     const table = document.getElementById("scheduleTable");
 
     for (let i = 0; i < days.length; i++)
@@ -186,67 +187,79 @@ async function saveSchedule()
         alert(`Error ${response.status}: ${responseText}`);
     }
 }
-
 async function loadSchedule()
 {
     const serviceProviderId = 1;
 
-    const response = await fetch(`/api/schedule/${serviceProviderId}`);
-
-    if (!response.ok)
+    try
     {
-        console.log("Could not load schedule.");
-        createSchedule();
-        return;
+        const response = await fetch(`/api/schedule/${serviceProviderId}`);
+
+        console.log("GET status:", response.status);
+
+        if (!response.ok)
+        {
+            console.log("Could not load schedule.");
+            createSchedule();
+            return;
+        }
+
+        const schedule = await response.json();
+
+        console.log("Loaded schedule:", schedule);
+
+        if (!schedule || schedule.length !== 7)
+        {
+            console.log("Schedule does not contain 7 days. Creating default schedule.");
+            createSchedule();
+            return;
+        }
+
+        console.log("RENDERING SAVED SCHEDULE");
+
+        const table = document.getElementById("scheduleTable");
+
+        table.innerHTML = "";
+
+        for (let i = 0; i < 7; i++)
+        {
+            const day = schedule[i];
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${days[i]}</td>
+
+                <td>
+                    <select id="open-${i}">
+                        ${createTimeOptions(day.start)}
+                    </select>
+                </td>
+
+                <td>
+                    <select id="close-${i}">
+                        ${createTimeOptions(day.end)}
+                    </select>
+                </td>
+
+                <td>
+                    <input
+                        type="checkbox"
+                        id="closed-${i}"
+                        ${day.closed ? "checked" : ""}
+                        onchange="toggleClosed(${i})">
+                </td>
+            `;
+
+            table.appendChild(row);
+
+            toggleClosed(i);
+        }
     }
-
-    const schedule = await response.json();
-
-    console.log("Loaded schedule:", schedule);
-
-    if (!schedule || schedule.length !== 7)
+    catch (error)
     {
+        console.error("Error loading schedule:", error);
         createSchedule();
-        return;
-    }
-
-    const table = document.getElementById("scheduleTable");
-
-    table.innerHTML = "";
-
-    for (let i = 0; i < 7; i++)
-    {
-        const day = schedule[i];
-
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${days[i]}</td>
-
-            <td>
-                <select id="open-${i}">
-                    ${createTimeOptions(day?.start)}
-                </select>
-            </td>
-
-            <td>
-                <select id="close-${i}">
-                    ${createTimeOptions(day?.end)}
-                </select>
-            </td>
-
-            <td>
-                <input
-                    type="checkbox"
-                    id="closed-${i}"
-                    ${day?.closed ? "checked" : ""}
-                    onchange="toggleClosed(${i})">
-            </td>
-        `;
-
-        table.appendChild(row);
-
-        toggleClosed(i);
     }
 }
 
