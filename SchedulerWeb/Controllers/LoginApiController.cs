@@ -37,7 +37,7 @@ namespace SchedulerWeb.Controllers
                     {
                         new Claim(CustomClaimTypes.UserId, user.UserId?.ToString(CultureInfo.InvariantCulture) ?? ""),
                         new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
-                        new Claim(CustomClaimTypes.Role, user.Role?.ToString() ?? Role.Uknown.ToString()),
+                        new Claim(ClaimTypes.Role, user.Role?.ToString() ?? Role.Uknown.ToString()),
                         new Claim(CustomClaimTypes.FirstName, user.FirstName ?? ""),
                         new Claim(ClaimTypes.Surname, user.LastName ?? ""),
                         new Claim(CustomClaimTypes.PhoneNumber, user.PhoneNumber ?? "")
