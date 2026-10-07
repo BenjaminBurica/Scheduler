@@ -21,6 +21,11 @@
 
     <br />
 
+    <div>
+        <label for="phoneNumber">Phone Number</label>
+        <input type="text" id="phoneNumber" placeholder="Enter phone number" />
+    </div>
+
     <h3>Service Steps</h3>
 
     <div id="steps"></div>
@@ -177,6 +182,9 @@
         const serviceType =
             document.getElementById("serviceType").value;
 
+        const phoneNumber =
+            document.getElementById("phoneNumber").value;
+
 
         if (firstName.trim() === "") {
             alert("Please enter a first name.");
@@ -201,8 +209,10 @@
             serviceProviderId: serviceProviderId,
 
             firstName: firstName,
+            phoneNumber: phoneNumber,
 
             serviceType: serviceType,
+            phoneNumber: phoneNumber,
 
             steps: steps
         };
@@ -239,6 +249,7 @@
 
             document.getElementById("firstName").value = "";
             document.getElementById("serviceType").value = "";
+            document.getElementById("phoneNumber").value = "";
 
             steps = [];
 
@@ -323,6 +334,11 @@
                         <p>
                             Service:
                             ${profile.serviceType}
+                        </p>
+
+                        <p>
+                            Phone Number:
+                            ${profile.phoneNumber}
                         </p>
 
                         <p>
