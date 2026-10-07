@@ -30,11 +30,12 @@ public class CustomerProfileRepository : ICustomerProfileRepository
             (
                 service_provider_id,
                 first_name,
+                phone_number,
                 service_type
             )
             VALUES
             (
-                $1, $2, $3
+                $1, $2, $3, $4
             )
             RETURNING customer_profile_id;
         ";
@@ -49,6 +50,9 @@ public class CustomerProfileRepository : ICustomerProfileRepository
 
             command.Parameters.AddWithValue(
                 customerProfile.FirstName);
+
+            command.Parameters.AddWithValue(
+                customerProfile.PhoneNumber);
 
             command.Parameters.AddWithValue(
                 customerProfile.ServiceType);
@@ -116,6 +120,7 @@ public class CustomerProfileRepository : ICustomerProfileRepository
                 cp.customer_profile_id,
                 cp.service_provider_id,
                 cp.first_name,
+                cp.phone_number,
                 cp.service_type,
                 s.customer_profile_step_id,
                 s.step_order,
@@ -169,8 +174,10 @@ public class CustomerProfileRepository : ICustomerProfileRepository
                     FirstName =
                         results.GetString(2),
 
+                    PhoneNumber =
+                        results.GetString(3),
                     ServiceType =
-                        results.GetString(3)
+                        results.GetString(4)
                 };
 
                 customerProfiles.Add(
@@ -184,19 +191,19 @@ public class CustomerProfileRepository : ICustomerProfileRepository
                     new CustomerProfileStep
                     {
                         Id =
-                            results.GetInt32(4),
+                            results.GetInt32(5),
 
                         CustomerProfileId =
                             customerProfileId,
 
                         StepOrder =
-                            results.GetInt32(5),
+                            results.GetInt32(6),
 
                         StepType =
-                            results.GetString(6),
+                            results.GetString(7),
 
                         DurationMinutes =
-                            results.GetInt32(7)
+                            results.GetInt32(8)
                     });
             }
         }
